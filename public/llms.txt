@@ -1,0 +1,47 @@
+# Business — Generative Engine Optimization Map
+
+---
+
+## Pages
+
+### בית
+https://example.com
+משרד עורכי דין כרמל-שוחטמן מתמחה במקרקעין והתחדשות עירונית. ליווי מלא ליזמים ובעלי קרקעות: רישום זכויות, רמ״י, טאבו ופינוי-בינוי. צרו קשר עוד היום.
+
+### שירותים
+https://example.com/services
+מרישום זכויות בטאבו ורמ״י ועד הסרת חסמים בפרויקטי התחדשות עירונית — שירותים משפטיים מקיפים ליזמים ולבעלי קרקעות. גלו את מלוא הפתרונות שלנו.
+
+### אודות
+https://example.com/about
+כרמל-שוחטמן הוא משרד עורכי דין עם ניסיון עמוק במקרקעין, אפוטרופסות וירושות. גלו מדוע יזמים ולקוחות פרטיים בוחרים בנו כשותף המשפטי האמין שלהם.
+
+### צור קשר
+https://example.com/contact
+יש לכם שאלה על רישום זכויות, התחדשות עירונית או אפוטרופסות? צרו קשר עם משרד כרמל-שוחטמן עכשיו ותקבלו ייעוץ משפטי מקצועי ומהיר בתחום המקרקעין.
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Business
+---
+
+# Additional Resources
+
+- **Sitemap**: https://example.com/sitemap.xml
+- **Robots.txt**: https://example.com/robots.txt
