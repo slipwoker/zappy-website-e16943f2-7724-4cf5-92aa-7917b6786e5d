@@ -7902,6 +7902,140 @@ body.accessibility-widget-visible ._access-menu {
   }
 }
 
+/* Added Component Styles */
+/* Logo Section Styles */
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  background-color: #ffffff;
+  padding: 48px 24px;
+  font-family: system-ui, sans-serif;
+  direction: rtl;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 480px;
+  width: 100%;
+}
+
+/* Logo Mark — initials with vertical bars */
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.logo-divider-left,
+.logo-divider-right {
+  display: block;
+  width: 1.5px;
+  height: 52px;
+  background: var(--gradient-primary);
+  border-radius: 2px;
+}
+
+.logo-initials {
+  font-size: 3rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  padding: 0 6px;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  user-select: none;
+}
+
+/* Logo Text */
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.logo-name-he {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.logo-name-en {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--primary);
+  letter-spacing: 0.06em;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.logo-tagline {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #6b5c3e;
+  letter-spacing: 0.08em;
+  margin: 0;
+  line-height: 1.5;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Bottom decorative line */
+.logo-bottom-line {
+  width: 100%;
+  height: 1px;
+  background: var(--gradient-primary);
+  margin-top: 12px;
+  border-radius: 1px;
+  opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .logo-section {
+    padding: 36px 16px;
+    min-height: 200px;
+  }
+
+  .logo-initials {
+    font-size: 2.4rem;
+  }
+
+  .logo-divider-left,
+  .logo-divider-right {
+    height: 42px;
+  }
+
+  .logo-name-he {
+    font-size: 0.95rem;
+  }
+
+  .logo-name-en {
+    font-size: 0.85rem;
+  }
+
+  .logo-tagline {
+    font-size: 0.78rem;
+  }
+}
+
 /* ========== RTL MOBILE NAVBAR FIX (zappy-rtl-mobile-fix) ========== */
 /* High-specificity rules to ensure RTL positioning wins over any [lang="en"] conflicts */
 /* For RTL sites: hamburger on RIGHT, phone on LEFT (mirror of LTR layout) */
