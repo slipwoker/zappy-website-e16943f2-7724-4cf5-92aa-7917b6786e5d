@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://carmel-shochtman.zappy5.app/sitemap.xml
+Sitemap: https://eladv.co.il/sitemap.xml

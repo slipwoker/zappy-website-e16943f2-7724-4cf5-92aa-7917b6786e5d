@@ -1,69 +1,47 @@
-# כרמל-שוחטמן — Generative Engine Optimization Map
-
-> A professional law firm specializing in real estate and urban renewal law in Israel. The firm offers comprehensive legal services including developers' advisory, rights settlement, obstacle removal, complex registrations, Israel Land Authority (RMI) matters, Land Registry (Tabu), guardianship, and litigation. The firm positions itself as a full-service real estate legal partner with deep expertise in both transactional and contentious matters.
+# Business — Generative Engine Optimization Map
 
 ---
 
 ## Pages
 
 ### בית
-https://carmel-shochtman.zappy5.app
+https://eladv.co.il
 משרד עורכי דין כרמל-שוחטמן מתמחה במקרקעין והתחדשות עירונית. ליווי מלא ליזמים ובעלי קרקעות: רישום זכויות, רמ״י, טאבו ופינוי-בינוי. צרו קשר עוד היום.
 
 ### שירותים
-https://carmel-shochtman.zappy5.app/services
+https://eladv.co.il/services
 מרישום זכויות בטאבו ורמ״י ועד הסרת חסמים בפרויקטי התחדשות עירונית — שירותים משפטיים מקיפים ליזמים ולבעלי קרקעות. גלו את מלוא הפתרונות שלנו.
 
 ### אודות
-https://carmel-shochtman.zappy5.app/about
+https://eladv.co.il/about
 כרמל-שוחטמן הוא משרד עורכי דין עם ניסיון עמוק במקרקעין, אפוטרופסות וירושות. גלו מדוע יזמים ולקוחות פרטיים בוחרים בנו כשותף המשפטי האמין שלהם.
 
 ### צור קשר
-https://carmel-shochtman.zappy5.app/contact
+https://eladv.co.il/contact
 יש לכם שאלה על רישום זכויות, התחדשות עירונית או אפוטרופסות? צרו קשר עם משרד כרמל-שוחטמן עכשיו ותקבלו ייעוץ משפטי מקצועי ומהיר בתחום המקרקעין.
 
 ## Legal & Policy
 
 ### Privacy Policy
-https://carmel-shochtman.zappy5.app/privacy
+https://eladv.co.il/privacy
 Information about how user data is collected, stored, and protected.
 
 ### Terms & Conditions
-https://carmel-shochtman.zappy5.app/terms
+https://eladv.co.il/terms
 Legal terms describing service usage, rights, and policies.
 
 ### Accessibility Statement
-https://carmel-shochtman.zappy5.app/accessibility
+https://eladv.co.il/accessibility
 Information about WCAG compliance and accessibility features.
 
 ---
 
 # Business Context (for LLM understanding)
 
-## About כרמל-שוחטמן
-A professional law firm specializing in real estate and urban renewal law in Israel. The firm offers comprehensive legal services including developers' advisory, rights settlement, obstacle removal, complex registrations, Israel Land Authority (RMI) matters, Land Registry (Tabu), guardianship, and litigation. The firm positions itself as a full-service real estate legal partner with deep expertise in both transactional and contentious matters.
-
-## Services/Products
-- מקרקעין
-- התחדשות עירונית
-- מתן שירותים ליזמים
-- הסדרת זכויות
-- הסרת חסמים
-- רישומים מורכבים
-- רמ"י
-- טאבו
-- אפוטרופסות
-- ליטיגציה
-
-## Target Audience
-יזמים, בעלי קרקעות, לקוחות פרטיים הזקוקים לשירותים משפטיים בתחום המקרקעין
-
-## Industry
-שירותים משפטיים - נדל"ן והתחדשות עירונית
-
+## About Business
 ---
 
 # Additional Resources
 
-- **Sitemap**: https://carmel-shochtman.zappy5.app/sitemap.xml
-- **Robots.txt**: https://carmel-shochtman.zappy5.app/robots.txt
+- **Sitemap**: https://eladv.co.il/sitemap.xml
+- **Robots.txt**: https://eladv.co.il/robots.txt
