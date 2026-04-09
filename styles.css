@@ -8098,6 +8098,24 @@ html body div {
   font-weight: 600 !important;
 }
 
+.contact-contact-section .contact-contact-section__select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B8952A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 14px center;
+  padding-left: 42px !important;
+  cursor: pointer;
+}
+
+.contact-contact-section .contact-contact-section__select option {
+  color: var(--text-dark);
+  background: var(--bg-light);
+}
+
+.contact-contact-section .contact-contact-section__select option:disabled {
+  color: var(--text-muted);
+}
+
 /* ========== RTL MOBILE NAVBAR FIX (zappy-rtl-mobile-fix) ========== */
 /* High-specificity rules to ensure RTL positioning wins over any [lang="en"] conflicts */
 /* For RTL sites: hamburger on RIGHT, phone on LEFT (mirror of LTR layout) */
