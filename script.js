@@ -1510,6 +1510,16 @@ window.onload = function() {
     if (window.__zappyPublishedZoomInit) return;
     window.__zappyPublishedZoomInit = true;
 
+    function isHeroBgWrapper(wrapper) {
+      var img = wrapper.querySelector('img');
+      if (img && (img.getAttribute('data-hero-bg') === 'true' || img.getAttribute('data-hero-background') === 'true')) return true;
+      var pos = (wrapper.style.position || '').replace(/\s*!important\s*/g, '').trim();
+      var w = (wrapper.style.width || '').replace(/\s*!important\s*/g, '').trim();
+      var h = (wrapper.style.height || '').replace(/\s*!important\s*/g, '').trim();
+      if (pos === 'absolute' && w === '100%' && h === '100%') return true;
+      return false;
+    }
+
     function parseObjPos(op) {
       var x = 50, y = 50;
       try {
@@ -1535,7 +1545,47 @@ window.onload = function() {
 
       var widthMode = wrapper.getAttribute('data-zappy-zoom-wrapper-width-mode');
       if (widthMode === 'full') return;
+      if (isHeroBgWrapper(wrapper)) return;
 
+      var isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        img.style.setProperty('position', 'relative', 'important');
+        img.style.setProperty('width', '100%', 'important');
+        img.style.setProperty('height', 'auto', 'important');
+        img.style.setProperty('max-width', '100%', 'important');
+        img.style.setProperty('display', 'block', 'important');
+        img.style.setProperty('object-fit', 'cover', 'important');
+        img.style.removeProperty('left');
+        img.style.removeProperty('top');
+        img.style.setProperty('margin', '0', 'important');
+        var mSrc = img.getAttribute('data-zappy-mobile-src');
+        var mPos = img.getAttribute('data-zappy-mobile-object-position');
+        var mZoom = parseFloat(img.getAttribute('data-zappy-mobile-zoom'));
+        if (mSrc) img.src = mSrc;
+        if (mPos) img.style.setProperty('object-position', mPos, 'important');
+        if (mZoom > 1) {
+          img.style.setProperty('transform', 'scale(' + mZoom + ')', 'important');
+          img.style.setProperty('transform-origin', mPos || '50% 50%', 'important');
+          wrapper.style.setProperty('overflow', 'hidden', 'important');
+        }
+        return;
+      }
+
+      // Desktop: if the image already has zoom styles saved from the editor
+      // (position:absolute + percentage-based width), trust them.
+      // The saved percentages are proportional and correct for any container size,
+      // since zoom/crop math is based purely on aspect ratios.
+      // Recalculating here can produce different values when the container
+      // dimensions differ between preview and deployed site.
+      var existingPos = (img.style.position || '').replace(/s*!importants*/g, '').trim();
+      var existingW = (img.style.width || '').replace(/s*!importants*/g, '').trim();
+      if (existingPos === 'absolute' && existingW.indexOf('%') !== -1) {
+        wrapper.style.setProperty('overflow', 'hidden', 'important');
+        wrapper.style.setProperty('position', 'relative', 'important');
+        return;
+      }
+
+      // Image lacks saved zoom styles — calculate from scratch
       var rect = wrapper.getBoundingClientRect();
       if (!rect || !rect.width || !rect.height) return;
 
@@ -1563,27 +1613,15 @@ window.onload = function() {
       var leftPct = (100 - wPct) * (pos.x / 100);
       var topPct = (100 - hPct) * (pos.y / 100);
 
-      var isMobile = window.innerWidth <= 768;
-      if (isMobile) {
-        img.style.setProperty('position', 'relative', 'important');
-        img.style.setProperty('width', '100%', 'important');
-        img.style.setProperty('height', 'auto', 'important');
-        img.style.setProperty('max-width', '100%', 'important');
-        img.style.setProperty('display', 'block', 'important');
-        img.style.setProperty('object-fit', 'cover', 'important');
-        img.style.removeProperty('left');
-        img.style.removeProperty('top');
-      } else {
-        img.style.setProperty('position', 'absolute', 'important');
-        img.style.setProperty('left', leftPct + '%', 'important');
-        img.style.setProperty('top', topPct + '%', 'important');
-        img.style.setProperty('width', wPct + '%', 'important');
-        img.style.setProperty('height', hPct + '%', 'important');
-        img.style.setProperty('max-width', 'none', 'important');
-        img.style.setProperty('max-height', 'none', 'important');
-        img.style.setProperty('display', 'block', 'important');
-        img.style.setProperty('object-fit', zoom < 1 ? 'fill' : 'cover', 'important');
-      }
+      img.style.setProperty('position', 'absolute', 'important');
+      img.style.setProperty('left', leftPct + '%', 'important');
+      img.style.setProperty('top', topPct + '%', 'important');
+      img.style.setProperty('width', wPct + '%', 'important');
+      img.style.setProperty('height', hPct + '%', 'important');
+      img.style.setProperty('max-width', 'none', 'important');
+      img.style.setProperty('max-height', 'none', 'important');
+      img.style.setProperty('display', 'block', 'important');
+      img.style.setProperty('object-fit', zoom < 1 ? 'fill' : 'cover', 'important');
       img.style.setProperty('margin', '0', 'important');
     }
 
@@ -1604,6 +1642,69 @@ window.onload = function() {
       }
     }
 
+    function restoreWrapperDimensions(wrapper) {
+      var widthMode = wrapper.getAttribute('data-zappy-zoom-wrapper-width-mode') || 'px';
+      if (widthMode === 'full' || widthMode === 'grid-responsive') return;
+      if (isHeroBgWrapper(wrapper)) return;
+
+      var storedW = wrapper.getAttribute('data-zappy-zoom-wrapper-width');
+      var storedH = wrapper.getAttribute('data-zappy-zoom-wrapper-height');
+      if (!storedW && !storedH) return;
+
+      if (widthMode === 'px' && storedW) {
+        var curW = (wrapper.style.width || '').replace(/s*!importants*/g, '').trim();
+        var storedWNorm = storedW.replace(/s*!importants*/g, '').trim();
+        if (!curW || curW === '100%' || curW.indexOf('%') !== -1 || curW !== storedWNorm) {
+          wrapper.style.setProperty('width', storedW, 'important');
+          wrapper.style.setProperty('max-width', '100%', 'important');
+        }
+      }
+      if (storedH) {
+        var curH = (wrapper.style.height || '').replace(/s*!importants*/g, '').trim();
+        var storedHNorm = storedH.replace(/s*!importants*/g, '').trim();
+        if (!curH || curH === 'auto' || curH === '100%' || curH.indexOf('%') !== -1 || curH !== storedHNorm) {
+          wrapper.style.setProperty('height', storedH, 'important');
+        }
+      }
+      wrapper.style.setProperty('overflow', 'hidden', 'important');
+      wrapper.style.setProperty('position', 'relative', 'important');
+    }
+
+    function fixHeroBgWrapperStyles(wrapper) {
+      if (!isHeroBgWrapper(wrapper)) return;
+      wrapper.style.setProperty('position', 'absolute', 'important');
+      wrapper.style.setProperty('top', '0', 'important');
+      wrapper.style.setProperty('left', '0', 'important');
+      wrapper.style.setProperty('width', '100%', 'important');
+      wrapper.style.setProperty('height', '100%', 'important');
+      wrapper.style.setProperty('max-width', 'none', 'important');
+      wrapper.style.setProperty('overflow', 'hidden', 'important');
+      wrapper.setAttribute('data-zappy-zoom-wrapper-width-mode', 'full');
+      var img = wrapper.querySelector('img');
+      if (img) {
+        img.style.setProperty('width', '100%', 'important');
+        img.style.setProperty('height', '100%', 'important');
+        img.style.setProperty('object-fit', 'cover', 'important');
+        img.style.setProperty('position', 'relative', 'important');
+        img.style.setProperty('top', '0', 'important');
+        img.style.setProperty('left', '0', 'important');
+        img.style.setProperty('max-width', 'none', 'important');
+        img.style.setProperty('max-height', 'none', 'important');
+        img.style.setProperty('display', 'block', 'important');
+        if (window.innerWidth <= 768) {
+          var mSrc = img.getAttribute('data-zappy-mobile-src');
+          var mPos = img.getAttribute('data-zappy-mobile-object-position');
+          var mZoom = parseFloat(img.getAttribute('data-zappy-mobile-zoom'));
+          if (mSrc) img.src = mSrc;
+          if (mPos) img.style.setProperty('object-position', mPos, 'important');
+          if (mZoom > 1) {
+            img.style.setProperty('transform', 'scale(' + mZoom + ')', 'important');
+            img.style.setProperty('transform-origin', mPos || '50% 50%', 'important');
+          }
+        }
+      }
+    }
+
     function initZoomWrappers() {
       var wrappers = document.querySelectorAll('[data-zappy-zoom-wrapper="true"]');
       for (var i = 0; i < wrappers.length; i++) {
@@ -1611,6 +1712,8 @@ window.onload = function() {
           var img = wrapper.querySelector('img');
           if (!img) return;
           if (wrapper.closest && wrapper.closest('.zappy-carousel-js-init, .zappy-carousel-active')) return;
+          fixHeroBgWrapperStyles(wrapper);
+          if (window.innerWidth > 768) restoreWrapperDimensions(wrapper);
           if (img.complete && img.naturalWidth > 0) {
             setTimeout(function() { applyZoom(wrapper, img); }, 0);
           } else {
@@ -1762,8 +1865,9 @@ window.onload = function() {
     if (window.__zappyFaqToggleInit) return;
     window.__zappyFaqToggleInit = true;
 
+    var answerSel = '[class*="faq-answer"], [class*="faq-content"], [class*="faq-body"], .accordion-content, .accordion-body';
+
     function initFaqToggle() {
-      // Match both exact (.faq-item) and page-prefixed (e.g. .home-faq-item) classes
       var items = document.querySelectorAll('[class*="faq-item"], .accordion-item');
       if (!items.length) return;
 
@@ -1774,11 +1878,12 @@ window.onload = function() {
         if (!question) return;
         if (question.__zappyFaqBound) return;
         question.__zappyFaqBound = true;
+        question.style.cursor = 'pointer';
 
         question.addEventListener('click', function(e) {
           e.preventDefault();
+          e.stopPropagation();
 
-          // Close sibling items in the same accordion group
           var parent = item.parentElement;
           if (parent) {
             var siblings = parent.querySelectorAll('[class*="faq-item"], .accordion-item');
@@ -1787,14 +1892,59 @@ window.onload = function() {
                 sib.classList.remove('active');
                 var sibQ = sib.querySelector('[class*="faq-question"], [class*="faq-header"], .accordion-header');
                 if (sibQ) sibQ.setAttribute('aria-expanded', 'false');
+                var sibA = sib.querySelector(answerSel);
+                if (sibA) {
+                  sibA.style.maxHeight = '0';
+                  sibA.style.overflow = 'hidden';
+                  sibA.style.opacity = '0';
+                  sibA.style.paddingTop = '0';
+                  sibA.style.paddingBottom = '0';
+                }
               }
             });
           }
 
-          // Toggle current item
           var isActive = item.classList.toggle('active');
           question.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+
+          var answer = item.querySelector(answerSel);
+          if (answer) {
+            answer.style.transition = 'max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease';
+            if (isActive) {
+              answer.style.display = '';
+              answer.style.maxHeight = answer.scrollHeight + 'px';
+              answer.style.overflow = 'hidden';
+              answer.style.opacity = '1';
+              answer.style.paddingTop = '';
+              answer.style.paddingBottom = '';
+            } else {
+              answer.style.maxHeight = '0';
+              answer.style.overflow = 'hidden';
+              answer.style.opacity = '0';
+              answer.style.paddingTop = '0';
+              answer.style.paddingBottom = '0';
+            }
+          }
+
+          var chevron = question.querySelector('[class*="chevron"], [class*="icon"], svg');
+          if (chevron) {
+            chevron.style.transform = isActive ? 'rotate(180deg)' : 'rotate(0deg)';
+            chevron.style.transition = 'transform 0.3s ease';
+          }
         });
+      });
+
+      items.forEach(function(item) {
+        if (item.classList.contains('active')) return;
+        var answer = item.querySelector(answerSel);
+        if (answer) {
+          answer.style.maxHeight = '0';
+          answer.style.overflow = 'hidden';
+          answer.style.opacity = '0';
+          answer.style.paddingTop = '0';
+          answer.style.paddingBottom = '0';
+          answer.style.transition = 'max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease';
+        }
       });
     }
 
@@ -2022,6 +2172,10 @@ window.onload = function() {
             if (!ch || !ch.tagName) continue;
             var tag = ch.tagName.toLowerCase();
             if (tag === 'script' || tag === 'style') continue;
+            if (ch.getAttribute('aria-hidden') === 'true') continue;
+            if (ch.getAttribute('data-zappy-internal') === 'true') continue;
+            var pos = window.getComputedStyle(ch).position;
+            if (pos === 'absolute' || pos === 'fixed') continue;
             items.push(ch);
           }
           var totalItems = items.length;
@@ -2029,6 +2183,8 @@ window.onload = function() {
 
           var cs = window.getComputedStyle(container);
           if (cs.display !== 'grid') continue;
+          var gta = (cs.gridTemplateAreas || '').trim();
+          if (gta && gta !== 'none') continue;
           var gtc = (cs.gridTemplateColumns || '').trim();
           if (!gtc || gtc === 'none') continue;
           var colWidths = gtc.split(' ').filter(function(v) { return v && parseFloat(v) > 0; });
@@ -2091,5 +2247,118 @@ window.onload = function() {
     } else {
       window.addEventListener('load', centerPartialGridRows);
     }
+  } catch(e) {}
+})();
+
+
+/* ZAPPY_CONTENT_ALIGNMENT_RUNTIME */
+(function(){
+  try {
+    if (window.__zappyContentAlignInit) return;
+    window.__zappyContentAlignInit = true;
+
+    var vShiftMap = { top: -0.5, upper: -0.25, center: 0, lower: 0.25, bottom: 0.5 };
+    var hShiftMap = { left: -0.5, 'mid-left': -0.25, center: 0, 'mid-right': 0.25, right: 0.5 };
+
+    function restoreContentAlignments() {
+      var sections = document.querySelectorAll('[data-zappy-content-align]');
+      for (var i = 0; i < sections.length; i++) {
+        try { applyAlignment(sections[i]); } catch(e) {}
+      }
+    }
+
+    function applyAlignment(section) {
+      var target = section.querySelector('[data-zappy-align-target]');
+      if (!target) return;
+
+      var align = section.getAttribute('data-zappy-content-align') || 'center-center';
+      var idx = align.indexOf('-');
+      if (idx === -1) return;
+      var vAlign = align.substring(0, idx) || 'center';
+      var hAlign = align.substring(idx + 1) || 'center';
+
+      if (!section.id) {
+        section.id = 'zappy-section-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+      }
+      var sel = '#' + section.id;
+
+      var old = section.querySelector('style[data-zappy-align-style]');
+      if (old) old.remove();
+
+      var ts = window.getComputedStyle(target);
+      var isFlex = (ts.display === 'flex' || ts.display === 'inline-flex');
+      var isColumn = (ts.flexDirection === 'column' || ts.flexDirection === 'column-reverse');
+
+      var sectionRect = section.getBoundingClientRect();
+      var sW = sectionRect.width || section.offsetWidth || 0;
+      var sH = sectionRect.height || section.offsetHeight || 0;
+
+      var orig = target.style.cssText;
+      target.style.setProperty('width', 'fit-content', 'important');
+      target.style.setProperty('height', 'auto', 'important');
+      target.style.setProperty('min-height', '0', 'important');
+      target.style.setProperty('max-height', 'none', 'important');
+      target.style.setProperty('align-self', 'flex-start', 'important');
+      target.style.setProperty('flex', 'none', 'important');
+      var tRect = target.getBoundingClientRect();
+      var tW = tRect.width || 0;
+      var tH = tRect.height || 0;
+      target.style.cssText = orig;
+
+      var freeH = Math.max(0, sW - tW);
+      var freeV = Math.max(0, sH - tH);
+      var hPx = Math.round((hShiftMap[hAlign] || 0) * freeH);
+      var vPx = Math.round((vShiftMap[vAlign] || 0) * freeV);
+
+      var t = [];
+      t.push('margin:auto!important');
+      if (hPx !== 0 || vPx !== 0) {
+        t.push('transform:translate(' + hPx + 'px,' + vPx + 'px)!important');
+      }
+      if (isFlex) {
+        t.push('align-items:center!important');
+        t.push('justify-content:center!important');
+      } else {
+        t.push('display:flex!important');
+        t.push('flex-direction:column!important');
+        t.push('align-items:center!important');
+      }
+
+      var c = ['justify-content:center!important'];
+      if (!isFlex && hAlign !== 'center') {
+        c.push('min-width:33.33%!important');
+        c.push('text-align:start!important');
+      }
+
+      var css = '';
+      if (hPx !== 0 || vPx !== 0) css += sel + '{overflow:hidden!important}';
+      css += sel + '>[data-zappy-align-target]{' + t.join(';') + '}';
+      css += sel + '>[data-zappy-align-target]>*{' + c.join(';') + '}';
+      css += '@media(max-width:768px){' +
+        sel + '>[data-zappy-align-target]{align-items:center!important;margin-left:auto!important;margin-right:auto!important;' +
+        (vPx !== 0 ? 'transform:translateY(' + vPx + 'px)!important' : 'transform:none!important') +
+        '}' + sel + '>[data-zappy-align-target]>*{margin-left:auto!important;margin-right:auto!important}}';
+
+      var s = document.createElement('style');
+      s.setAttribute('data-zappy-align-style', 'true');
+      s.textContent = css;
+      section.insertBefore(s, section.firstChild);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', restoreContentAlignments);
+    } else {
+      restoreContentAlignments();
+    }
+
+    var _timer = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(_timer);
+      _timer = setTimeout(restoreContentAlignments, 200);
+    });
+    window.addEventListener('orientationchange', function() {
+      clearTimeout(_timer);
+      _timer = setTimeout(restoreContentAlignments, 200);
+    });
   } catch(e) {}
 })();
